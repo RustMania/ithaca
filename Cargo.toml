@@ -1,0 +1,16 @@
+[package]
+name = "rust-coding-test"
+version = "0.1.0"
+edition = "2021"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+tokio = { version = "1.18.2", features = ["fs", "io-util", "sync",  "macros" , "rt-multi-thread"] }
+tokio-stream = "0.1.8"
+serde = "1.0.137"
+serde_derive = "1.0.137"
+csv-async = { version = "1.1", features = ["tokio", "with_serde"] }
+rust_decimal = "1.23"
+error-chain = "0.12.4"
+
