@@ -220,7 +220,7 @@ impl Balances {
 }
 
 async fn do_cmd(
-    cmd: Command,
+    cmd: &Command,
     transaction_history: &TransactionHistoryType,
     balances: &BalancesType,
 ) -> Result<()> {
@@ -269,7 +269,7 @@ async fn do_cmd(
             .await
             .get(&cmd.tx_id)
             .and_then(|tx| tx.amount),
-        DEPOSIT | WITHDRAWAL => match cmd.amount {
+        DEPOSIT | WITHDRAWAL => match &cmd.amount {
             Some(q) => Some(to_decimal(q.as_str())?),
             None => None,
         },
@@ -306,7 +306,7 @@ async fn do_cmd(
                     guard.insert(
                         cmd.tx_id,
                         Transaction {
-                            type_: cmd.type_,
+                            type_: cmd.type_.clone(),
                             client_id: cmd.client_id,
                             amount: Some(amount),
                             in_dispute: false,
@@ -359,8 +359,8 @@ async fn main() -> Result<()> {
         loop {
             match egress.recv().await {
                 Some(cmd) => {
-                    if let Err(e) = do_cmd(cmd, &transaction_history, &balances).await {
-                        println!("{}", e);
+                    if let Err(e) = do_cmd(&cmd, &transaction_history, &balances).await {
+                        eprintln!("\"{:?}\" : {}", cmd, e);
                     }
                 }
                 None => break,
@@ -401,12 +401,12 @@ mod tests {
         while let Some(input) = records.next().await {
             match input {
                 Ok(cmd) => {
-                    if let Err(e) = do_cmd(cmd, th, bs).await {
+                    if let Err(e) = do_cmd(&cmd, th, bs).await {
                         return Err(e);
                     }
                 }
                 Err(e) => {
-                    println!("{}", e);
+                    eprintln!("{}", e);
                     return Ok(());
                 }
             }
