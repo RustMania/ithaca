@@ -328,7 +328,7 @@ async fn main() -> Result<()> {
 
     let args: Vec<String> = env::args().collect();
     if args.len() > 2 {
-        println!("Usage: {} filename", args[0]);
+        eprintln!("Usage: {} filename", args[0]);
         exit(-1);
     }
     let (ingress, mut egress) = mpsc::unbounded_channel();
@@ -346,7 +346,7 @@ async fn main() -> Result<()> {
                 Ok(cmd) => {
                     ingress.send(cmd).unwrap();
                 }
-                Err(e) => println!("{}", e),
+                Err(e) => eprintln!("{}", e),
             }
         }
         Ok(())
